@@ -200,16 +200,16 @@ const DashboardView = () => (
         </div>
       </div>
 
-      {/* AI Insights Sidebar */}
+      {/* Actions en Attente Sidebar */}
       <div className="flex flex-col gap-6">
         <div className="glass-card bg-slate-900 text-white border-0 shadow-2xl shadow-slate-200">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-btp-cta/20 rounded-lg">
-              <ShieldAlert size={20} className="text-btp-cta" />
+              <CheckSquare size={20} className="text-btp-cta" />
             </div>
             <div>
-              <h3 className="text-white text-lg font-heading font-bold">IA Prédictive</h3>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest font-heading">Alertes Système</p>
+              <h3 className="text-white text-lg font-heading font-bold">Actions en Attente</h3>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest font-heading">Priorité Immédiate</p>
             </div>
           </div>
 
@@ -219,14 +219,11 @@ const DashboardView = () => (
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => handleInteraction("Alerte Logistique", "Contact du fournisseur Holcim en cours...")}
+              onClick={() => setActiveTab('actions')}
               className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-btp-cta/30 transition-colors cursor-pointer"
             >
-              <p className="font-bold text-xs text-orange-400 uppercase tracking-widest">Retard Logistique Douane</p>
-              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed font-medium">
-                Congestion critique au terminal TC2.
-                Livraison <span className="text-white">Ciment Holcim</span> estimée à +48h.
-              </p>
+              <p className="font-bold text-xs text-red-400 uppercase tracking-widest">Urgent : Grue G1</p>
+              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed font-medium">Contrôle technique requis aujourd'hui sur le <span className="text-white">Pont Cocody</span>.</p>
             </motion.div>
 
             <motion.div
@@ -235,22 +232,19 @@ const DashboardView = () => (
               transition={{ delay: 0.2 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => handleInteraction("Optimisation", "Planification du ravitaillement pour la flotte Bouaké...")}
-              className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-green-400/30 transition-colors cursor-pointer"
+              onClick={() => setActiveTab('actions')}
+              className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-orange-400/30 transition-colors cursor-pointer"
             >
-              <p className="font-bold text-xs text-green-400 uppercase tracking-widest">Optimisation Carburant</p>
-              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed font-medium">
-                Gasoil (-2%) détecté. Suggestion :
-                Ravitaillement anticipé flotte Bouaké.
-              </p>
+              <p className="font-bold text-xs text-orange-400 uppercase tracking-widest">Validation Facture</p>
+              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed font-medium">Paiement <span className="text-white">Holcim (12.4M)</span> en attente de signature.</p>
             </motion.div>
           </div>
 
           <button
-            onClick={() => handleInteraction("Analyse IA", "Lancement d'un scan complet des risques opérationnels...")}
-            className="w-full mt-6 py-3 rounded-xl bg-slate-800 text-xs font-bold hover:bg-btp-cta transition-colors text-slate-300 hover:text-white active:scale-95"
+            onClick={() => setActiveTab('actions')}
+            className="mt-8 w-full py-3 bg-white text-slate-900 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-btp-cta hover:text-white transition-all active:scale-95"
           >
-            Analyser tous les risques
+            VOIR TOUTES LES ACTIONS
           </button>
         </div>
 
@@ -278,29 +272,20 @@ const DashboardView = () => (
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              whileHover={{ scale: 1.5, zIndex: 10 }}
-              onClick={(e) => { e.stopPropagation(); handleInteraction("Marqueur : Chantier Bassam", "Statut: En cours. Progression: 75%"); }}
               className="absolute top-1/4 left-1/3 w-4 h-4 bg-btp-cta rounded-full border-2 border-white shadow-lg cursor-pointer z-0"
             />
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
-              whileHover={{ scale: 1.5, zIndex: 10 }}
-              onClick={(e) => { e.stopPropagation(); handleInteraction("Marqueur : Pont Cocody", "Statut: Alerte. Matériaux en attente."); }}
               className="absolute top-1/2 left-1/2 w-4 h-4 bg-btp-cta rounded-full border-2 border-white shadow-lg cursor-pointer z-0"
             />
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ repeat: Infinity, duration: 2, delay: 1 }}
-              whileHover={{ scale: 1.5, zIndex: 10 }}
-              onClick={(e) => { e.stopPropagation(); handleInteraction("Marqueur : Barrage Buyo", "Statut: Urgent. Retard détecté."); }}
               className="absolute bottom-1/3 right-1/4 w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-lg cursor-pointer z-0"
             />
 
-            <div
-              onClick={() => handleInteraction("Pointage", "Ouverture du détail de l'Equipe Alpha...")}
-              className="absolute bottom-4 left-4 right-4 p-3 bg-white/90 backdrop-blur rounded-lg border border-slate-200 shadow-sm cursor-pointer hover:bg-white transition-colors active:scale-95"
-            >
+            <div className="absolute bottom-4 left-4 right-4 p-3 bg-white/90 backdrop-blur rounded-lg border border-slate-200 shadow-sm cursor-pointer hover:bg-white transition-colors active:scale-95">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Dernier Pointage</p>
               <p className="text-xs font-bold mt-1">Equipe Alpha • Pont Cocody</p>
               <p className="text-[10px] text-btp-secondary font-medium">Il y a 3 minutes • GPS : 5.3484, -4.0197</p>
@@ -1152,11 +1137,11 @@ const App = () => {
       {/* Sidebar */}
       <aside className="w-72 bg-white border-r border-slate-200 p-6 flex flex-col h-full overflow-y-auto shrink-0 scrollbar-hide">
         <div className="flex items-center gap-3 mb-10 px-2 shrink-0">
-          <div className="w-10 h-10 bg-gradient-to-br from-btp-cta to-orange-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-100 rotate-3">
-            <HardHat size={24} />
+          <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center text-white shadow-xl shadow-slate-200 rotate-3 overflow-hidden border border-slate-800">
+            <span className="text-xl font-black italic tracking-tighter">KR</span>
           </div>
           <div>
-            <h2 className="text-xl font-heading font-black tracking-tight leading-none">BTP-IVOIRE</h2>
+            <h2 className="text-xl font-heading font-black tracking-tight leading-none">KAYRY BTP</h2>
             <span className="text-[10px] text-btp-secondary font-bold uppercase tracking-[0.2em]">Manager Pro</span>
           </div>
         </div>

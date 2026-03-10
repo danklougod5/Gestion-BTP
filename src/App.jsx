@@ -120,19 +120,13 @@ const ProjectRow = ({ name, location, progress, status }) => (
 const SidebarItem = ({ id, icon: Icon, label, activeTab, setActiveTab }) => (
   <button
     onClick={() => setActiveTab(id)}
-    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative ${activeTab === id
-      ? 'bg-slate-900 text-white shadow-lg shadow-slate-200'
-      : 'text-btp-secondary hover:bg-slate-50 hover:text-slate-900'
+    className={`flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group relative ${activeTab === id
+      ? 'bg-black text-white shadow-xl shadow-slate-200'
+      : 'text-slate-500 hover:bg-slate-50 hover:text-black'
       }`}
   >
-    <Icon size={20} className={activeTab === id ? 'text-btp-cta' : 'group-hover:text-btp-cta transition-colors'} />
-    <span className="font-semibold text-sm">{label}</span>
-    {activeTab === id && (
-      <motion.div
-        layoutId="sidebar-active"
-        className="absolute left-0 w-1 h-6 bg-btp-cta rounded-r-full"
-      />
-    )}
+    <Icon size={20} className={activeTab === id ? 'text-white' : 'text-slate-400 group-hover:text-black transition-colors'} />
+    <span className="font-bold text-[13px] tracking-tight">{label}</span>
   </button>
 );
 
@@ -703,32 +697,59 @@ const ChatView = () => {
 };
 
 const ActionsView = () => (
-  <div className="max-w-5xl mx-auto">
-    <header className="mb-10">
-      <h1 className="text-4xl font-heading font-bold tracking-tight">Actions en Attente</h1>
-      <p className="text-btp-secondary font-medium mt-1">Liste consolidée des tâches et validations prioritaires sur tous vos sites.</p>
-    </header>
-
-    <div className="grid grid-cols-1 gap-4">
-      {[
-        { title: "Valider facture Ciment Holcim", project: "Echangeur Akwaba", priority: "high", date: "Demain" },
-        { title: "Rapport HSE mensuel", project: "CHU Yamoussoukro", priority: "medium", date: "12 Mars" },
-        { title: "Approuver devis climatisation", project: "Logements Anyama", priority: "low", date: "15 Mars" },
-        { title: "Contrôle technique grue G1", project: "Pont Cocody", priority: "high", date: "Aujourd'hui" }
-      ].map((action, i) => (
-        <div key={i} className="glass-card flex items-center justify-between group hover:border-slate-300 transition-colors">
-          <div className="flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold ${action.priority === 'high' ? 'bg-red-100 text-red-600' : action.priority === 'medium' ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'}`}>
-              {action.priority === 'high' ? '!!!' : action.priority === 'medium' ? '!!' : '!'}
-            </div>
-            <div>
-              <h3 className="font-bold text-slate-900 group-hover:text-btp-cta transition-colors">{action.title}</h3>
-              <p className="text-xs text-btp-secondary font-medium uppercase tracking-wider">{action.project} • Échéance : {action.date}</p>
-            </div>
-          </div>
-          <button className="px-6 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold active:scale-95 transition-transform">Marquer comme fait</button>
+  <div className="max-w-4xl mx-auto py-10">
+    <div className="glass-card bg-white border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-[24px]">
+      <header className="mb-8 px-2 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-heading font-black tracking-tight text-slate-900">Liste de Contrôle du Chantier</h1>
+          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Actions & Validations</p>
         </div>
-      ))}
+        <div className="flex gap-2">
+          <span className="p-2 bg-slate-50 rounded-lg text-slate-400 cursor-pointer hover:text-black transition-colors"><Settings size={18} /></span>
+        </div>
+      </header>
+
+      <div className="space-y-4">
+        {[
+          { title: "Coulage dalle R+1", status: "En attente", author: "Jean-Marc K.", completed: false },
+          { title: "Vérification étanchéité", status: "Terminé", author: "Alice K.", completed: true },
+          { title: "Installation échafaudages", status: "En cours", author: "Moussa D.", completed: false },
+          { title: "Livraison gravier (10 tonnes)", status: "Retardé", author: "Koffi N.", completed: false }
+        ].map((action, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${action.completed ? 'bg-slate-50/50 border-slate-100' : 'bg-white border-slate-200 hover:border-black'}`}
+          >
+            <div className="flex items-center gap-5">
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${action.completed ? 'bg-btp-accent-green text-white' : 'bg-white border-2 border-slate-100 text-slate-200'}`}>
+                {action.completed ? <CheckSquare size={16} /> : <div className="w-4 h-4 rounded-full border-2 border-slate-100"></div>}
+              </div>
+              <div>
+                <h3 className={`font-bold transition-colors ${action.completed ? 'text-slate-400 line-through' : 'text-slate-900'}`}>{action.title}</h3>
+                <div className="flex items-center gap-3 mt-1">
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${action.status === 'Terminé' ? 'text-green-500' : action.status === 'Retardé' ? 'text-red-500' : 'text-slate-400'}`}>
+                    • {action.status}
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-medium">Ajouté par : <span className="text-slate-600 font-bold">{action.author}</span></span>
+                </div>
+              </div>
+            </div>
+            <button className={`p-2 rounded-lg transition-colors ${action.completed ? 'text-slate-300' : 'text-slate-400 hover:bg-slate-50 hover:text-black'}`}>
+              <ArrowUpRight size={18} />
+            </button>
+          </motion.div>
+        ))}
+      </div>
+
+      <button
+        onClick={() => handleInteraction("Nouvelle Tâche", "Ouverture du formulaire rapide...")}
+        className="mt-8 w-full py-4 border-2 border-dashed border-slate-100 rounded-2xl text-slate-400 font-bold text-sm flex items-center justify-center gap-2 hover:border-black hover:text-black hover:bg-slate-50/30 transition-all cursor-pointer"
+      >
+        <Plus size={18} /> Ajouter une tâche
+      </button>
     </div>
   </div>
 );

@@ -120,17 +120,23 @@ const ProjectRow = ({ name, location, progress, status }) => (
 const SidebarItem = ({ id, icon: Icon, label, activeTab, setActiveTab }) => (
   <button
     onClick={() => setActiveTab(id)}
-    className={`flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group relative ${activeTab === id
+    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative ${activeTab === id
       ? 'bg-black text-white shadow-xl shadow-slate-200'
       : 'text-slate-500 hover:bg-slate-50 hover:text-black'
       }`}
   >
-    <Icon size={20} className={activeTab === id ? 'text-white' : 'text-slate-400 group-hover:text-black transition-colors'} />
-    <span className="font-bold text-[13px] tracking-tight">{label}</span>
+    <Icon size={20} className={activeTab === id ? 'text-white' : 'group-hover:text-black transition-colors'} />
+    <span className="font-semibold text-sm">{label}</span>
+    {activeTab === id && (
+      <motion.div
+        layoutId="sidebar-active"
+        className="absolute left-0 w-1.5 h-6 bg-white rounded-r-full"
+      />
+    )}
   </button>
 );
 
-const DashboardView = () => (
+const DashboardView = ({ setActiveTab }) => (
   <>
     <header className="flex justify-between items-center mb-10">
       <div>
@@ -202,8 +208,8 @@ const DashboardView = () => (
               <CheckSquare size={20} className="text-btp-cta" />
             </div>
             <div>
-              <h3 className="text-white text-lg font-heading font-bold">Actions en Attente</h3>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest font-heading">Priorité Immédiate</p>
+              <h3 className="text-white text-lg font-heading font-bold !text-white">Actions en Attente</h3>
+              <p className="text-[10px] text-btp-cta font-bold uppercase tracking-widest font-heading">Priorité Immédiate</p>
             </div>
           </div>
 
@@ -214,10 +220,17 @@ const DashboardView = () => (
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActiveTab('actions')}
-              className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-btp-cta/30 transition-colors cursor-pointer"
+              className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-white/30 transition-colors cursor-pointer group"
             >
-              <p className="font-bold text-xs text-red-400 uppercase tracking-widest">Urgent : Grue G1</p>
-              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed font-medium">Contrôle technique requis aujourd'hui sur le <span className="text-white">Pont Cocody</span>.</p>
+              <div className="flex justify-between items-start mb-2">
+                <p className="font-bold text-[10px] text-red-400 uppercase tracking-widest">Urgent : Grue G1</p>
+                <span className="px-2 py-0.5 bg-red-400/10 text-red-400 rounded text-[9px] font-black uppercase">En attente</span>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed font-medium">Contrôle technique requis sur le Pont Cocody.</p>
+              <div className="mt-4 flex items-center gap-2 pt-3 border-t border-slate-700/50">
+                <div className="w-5 h-5 rounded-full bg-slate-600 flex items-center justify-center text-[8px] font-bold">JK</div>
+                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Par Jean-Marc Koné</p>
+              </div>
             </motion.div>
 
             <motion.div
@@ -227,16 +240,23 @@ const DashboardView = () => (
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActiveTab('actions')}
-              className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-orange-400/30 transition-colors cursor-pointer"
+              className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-white/30 transition-colors cursor-pointer"
             >
-              <p className="font-bold text-xs text-orange-400 uppercase tracking-widest">Validation Facture</p>
-              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed font-medium">Paiement <span className="text-white">Holcim (12.4M)</span> en attente de signature.</p>
+              <div className="flex justify-between items-start mb-2">
+                <p className="font-bold text-[10px] text-orange-400 uppercase tracking-widest">Validation Facture</p>
+                <span className="px-2 py-0.5 bg-orange-400/10 text-orange-400 rounded text-[9px] font-black uppercase">À signer</span>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed font-medium">Paiement Holcim (12.4M) pour Bassam.</p>
+              <div className="mt-4 flex items-center gap-2 pt-3 border-t border-slate-700/50">
+                <div className="w-5 h-5 rounded-full bg-slate-600 flex items-center justify-center text-[8px] font-bold">AK</div>
+                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Par Alice Kouassi</p>
+              </div>
             </motion.div>
           </div>
 
           <button
             onClick={() => setActiveTab('actions')}
-            className="mt-8 w-full py-3 bg-white text-slate-900 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-btp-cta hover:text-white transition-all active:scale-95"
+            className="mt-8 w-full py-3 bg-white text-slate-900 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black hover:text-white transition-all active:scale-95"
           >
             VOIR TOUTES LES ACTIONS
           </button>
@@ -439,19 +459,32 @@ const ProjectDetailView = ({ project, onBack }) => {
         </div>
 
         <div className="space-y-6">
-          <div className="glass-card bg-slate-900 text-white border-0">
-            <h3 className="font-heading font-bold mb-4">Statut Financier</h3>
-            <div className="space-y-4">
+          <div className="glass-card bg-slate-900 border-0 shadow-2xl overflow-hidden relative group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform">
+              <Wallet size={64} className="text-white" />
+            </div>
+            <h3 className="font-heading font-bold mb-6 text-white text-xl relative z-10">Statut Financier</h3>
+            <div className="space-y-6 relative z-10">
               <div>
-                <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Budget Total</p>
-                <p className="text-2xl font-bold">{project.budget} CFA</p>
+                <p className="text-[10px] text-slate-400 font-bold uppercase mb-2 tracking-widest">Budget Total</p>
+                <p className="text-3xl font-black text-white">{project.budget} CFA</p>
               </div>
-              <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-btp-cta w-2/3"></div>
-              </div>
-              <div className="flex justify-between text-[10px] font-bold text-slate-400">
-                <span>Dépensé : 65%</span>
-                <span>Restant : 35%</span>
+              <div>
+                <div className="flex justify-between text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-wider">
+                  <span>Avancement</span>
+                  <span className="text-btp-cta">65%</span>
+                </div>
+                <div className="h-2.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: '65%' }}
+                    className="h-full bg-gradient-to-r from-btp-cta to-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.4)]"
+                  />
+                </div>
+                <div className="flex justify-between mt-3 text-[10px] font-bold">
+                  <span className="text-btp-secondary">Dépensé : 65%</span>
+                  <span className="text-green-400">Restant : 35%</span>
+                </div>
               </div>
             </div>
           </div>
@@ -571,290 +604,541 @@ const ChatView = () => {
   const [activeConversation, setActiveConversation] = useState(0);
 
   const conversations = [
-    { name: "Canal Général", lastMsg: "Attention aux orages sur San Pedro...", status: "available", avatar: null, unread: 2 },
-    { name: "Direction Technique", lastMsg: "Le planning a été mis à jour.", status: "dnd", avatar: "JK", info: "Jean-Marc Koné" },
-    { name: "Chantier Bassam", lastMsg: "Béton livré à 14:00.", status: "available", avatar: "MD", info: "Moussa Diakité" },
-    { name: "Equipe RH", lastMsg: "Fiches de paie prêtes.", status: "away", avatar: "RH" }
+    { name: "Canal Général", lastMsg: "Attention aux orages sur San Pedro...", status: "available", avatar: null, unread: 2, type: "site" },
+    { name: "Direction Technique", lastMsg: "Le planning a été mis à jour.", status: "dnd", avatar: "JK", info: "Jean-Marc Koné", type: "office" },
+    { name: "Chantier Bassam", lastMsg: "Béton livré à 14:00.", status: "available", avatar: "MD", info: "Moussa Diakité", type: "site" },
+    { name: "Equipe RH", lastMsg: "Fiches de paie prêtes.", status: "away", avatar: "RH", type: "office" }
   ];
 
   return (
-    <div className="max-w-7xl mx-auto h-[calc(100vh-140px)] flex flex-col">
-      <header className="mb-6 flex justify-between items-end">
+    <div className="h-[calc(100vh-140px)] flex flex-col">
+      <header className="mb-8 flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-heading font-black tracking-tight text-black">Kayry Connect</h1>
-          <p className="text-slate-500 text-sm font-medium mt-1">Plateforme de communication sécurisée pour les équipes de chantier.</p>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Système de Communication Chiffré</span>
+          </div>
+          <h1 className="text-4xl font-heading font-black tracking-tight text-slate-900 flex items-center gap-4">
+            Kayry Connect
+            <span className="text-xs bg-btp-cta/10 text-btp-cta px-3 py-1 rounded-full font-bold">PRO</span>
+          </h1>
         </div>
-        <div className="flex gap-2">
-          <span className="px-3 py-1 bg-black text-white rounded-full text-[10px] font-black uppercase tracking-widest">Live</span>
+        <div className="flex gap-3">
+          <button className="p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm">
+            <Settings size={18} className="text-slate-400" />
+          </button>
+          <button className="btn-primary flex items-center gap-2">
+            <Plus size={18} /> Nouvelle Discussion
+          </button>
         </div>
       </header>
 
-      <div className="flex-1 rounded-3xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden border border-slate-100 bg-white flex" style={{ minHeight: "750px" }}>
-        <MainContainer responsive style={{ border: 'none' }}>
-          <ChatSidebar position="left" scrollable={true} className="border-r border-slate-50" style={{ width: '350px', backgroundColor: '#fff' }}>
-            <div className="p-6 border-b border-slate-50">
-              <ChatSearch placeholder="Rechercher une équipe..." />
+      <div className="flex-1 bg-white rounded-[2rem] shadow-2xl shadow-slate-200 border border-slate-100 overflow-hidden flex">
+        {/* Sidebar */}
+        <div className="w-80 border-r border-slate-100 flex flex-col bg-slate-50/50">
+          <div className="p-6">
+            <div className="relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-btp-cta transition-colors" size={16} />
+              <input
+                type="text"
+                placeholder="Rechercher une équipe..."
+                className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-btp-cta/10 focus:border-btp-cta transition-all"
+              />
             </div>
-            <ConversationList>
-              {conversations.map((c, i) => (
-                <Conversation
-                  key={i}
-                  name={c.name}
-                  lastSenderName={c.info || "Système"}
-                  info={c.lastMsg}
-                  active={activeConversation === i}
-                  onClick={() => setActiveConversation(i)}
-                  unreadDot={c.unread > 0}
-                  style={{ padding: '15px 20px' }}
-                >
-                  <Avatar name={c.avatar || c.name[0]} status={c.status} />
-                </Conversation>
-              ))}
-            </ConversationList>
-          </ChatSidebar>
+          </div>
 
-          <ChatContainer style={{ backgroundColor: '#fcfcfc' }}>
-            <ConversationHeader style={{ padding: '15px 25px', borderBottom: '1px solid #f1f5f9' }}>
-              <ConversationHeader.Back />
-              <Avatar name={conversations[activeConversation].avatar || conversations[activeConversation].name[0]} status={conversations[activeConversation].status} />
-              <ConversationHeader.Content
-                userName={conversations[activeConversation].name}
-                info={`Statut : ${conversations[activeConversation].status === 'available' ? 'En ligne' : 'Absent'}`}
+          <div className="flex-1 overflow-y-auto px-3 space-y-1">
+            {conversations.map((c, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ x: 4 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setActiveConversation(i)}
+                className={`p-4 rounded-2xl cursor-pointer transition-all flex items-center gap-4 ${activeConversation === i
+                    ? 'bg-white shadow-lg shadow-slate-200 border border-slate-100'
+                    : 'hover:bg-white/60 text-slate-500 hover:text-slate-900 border border-transparent'
+                  }`}
+              >
+                <div className="relative">
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white shadow-inner ${c.type === 'site' ? 'bg-btp-primary' : 'bg-slate-700'
+                    }`}>
+                    {c.avatar || c.name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white shadow-sm ${c.status === 'available' ? 'bg-green-500' : c.status === 'dnd' ? 'bg-red-500' : 'bg-amber-500'
+                    }`}></div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-start mb-0.5">
+                    <h3 className="font-bold text-sm truncate">{c.name}</h3>
+                    {c.unread > 0 && (
+                      <span className="w-2 h-2 bg-btp-cta rounded-full shadow-lg shadow-orange-500"></span>
+                    )}
+                  </div>
+                  <p className="text-xs opacity-70 truncate font-medium">{c.lastMsg}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Chat Area */}
+        <div className="flex-1 flex flex-col bg-white">
+          <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-20">
+            <div className="flex items-center gap-4">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shadow-lg ${conversations[activeConversation].type === 'site' ? 'bg-btp-primary' : 'bg-slate-700'
+                }`}>
+                {conversations[activeConversation].avatar || conversations[activeConversation].name.split(' ').map(n => n[0]).join('')}
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900">{conversations[activeConversation].name}</h3>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                  <span className={`w-1.5 h-1.5 rounded-full ${conversations[activeConversation].status === 'available' ? 'bg-green-500' : 'bg-amber-500'}`}></span>
+                  {conversations[activeConversation].status === 'available' ? 'Équipe Connectée' : 'Partiellement Absent'}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="p-2.5 rounded-xl hover:bg-slate-50 text-slate-400 hover:text-btp-cta transition-all border border-transparent hover:border-slate-100">
+                <Users size={18} />
+              </button>
+              <button className="p-2.5 rounded-xl hover:bg-slate-50 text-slate-400 hover:text-btp-cta transition-all border border-transparent hover:border-slate-100">
+                <FileText size={18} />
+              </button>
+              <div className="w-px h-6 bg-slate-100 mx-2"></div>
+              <button className="btn-primary py-2 px-4 text-xs">Ouvrir Dossier Technique</button>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed opacity-95">
+            <div className="flex justify-center">
+              <span className="px-4 py-1.5 bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-slate-200 shadow-sm">
+                Aujourd'hui, 10 Mars 2026
+              </span>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-8 h-8 rounded-lg bg-orange-100 text-btp-cta flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">JK</div>
+              <div className="max-w-[70%]">
+                <div className="bg-slate-50 p-4 rounded-2xl rounded-tl-none border border-slate-100 shadow-sm">
+                  <p className="text-sm font-bold text-slate-900 mb-1">Jean-Marc Koné</p>
+                  <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                    Bonjour à tous, point météo : attention aux orages sur San Pedro cet après-midi. Sécurisez le matériel sensible.
+                  </p>
+                </div>
+                <span className="text-[10px] text-slate-400 font-bold ml-2 mt-1 block">08:30 • Lu</span>
+              </div>
+            </div>
+
+            <div className="flex flex-row-reverse items-start gap-4">
+              <div className="w-8 h-8 rounded-lg bg-slate-800 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-lg">ME</div>
+              <div className="max-w-[70%] flex flex-col items-end">
+                <div className="bg-btp-primary p-4 rounded-2xl rounded-tr-none shadow-xl shadow-orange-100 text-white">
+                  <p className="text-sm leading-relaxed font-medium">
+                    Bien reçu Directeur. L'équipe Alpha a déjà commencé le repli. Le béton de la dalle B2 est sec.
+                  </p>
+                </div>
+                <span className="text-[10px] text-slate-400 font-bold mr-2 mt-1 block">09:15 • Envoyé</span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-8 h-8 rounded-lg bg-btp-primary text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">AK</div>
+              <div className="max-w-[70%]">
+                <div className="bg-slate-50 p-4 rounded-2xl rounded-tl-none border border-slate-100 shadow-sm">
+                  <p className="text-sm font-bold text-slate-900 mb-2">Alice Kouassi</p>
+                  <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center gap-3 cursor-pointer hover:border-btp-cta transition-colors group">
+                    <div className="p-2 bg-btp-cta/10 text-btp-cta rounded-lg group-hover:bg-btp-cta group-hover:text-white transition-colors">
+                      <FileText size={20} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-800 uppercase">Rapport_San_Pedro.pdf</p>
+                      <p className="text-[10px] text-slate-400 font-bold">2.4 MB • PDF Document</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-slate-600 mt-3 leading-relaxed font-medium">
+                    Ci-joint le rapport technique mis à jour avant les intempéries.
+                  </p>
+                </div>
+                <span className="text-[10px] text-slate-400 font-bold ml-2 mt-1 block">10:05 • Lu</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6 bg-white border-t border-slate-50">
+            <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-[1.5rem] border border-slate-200 focus-within:border-btp-cta/50 focus-within:ring-4 focus-within:ring-btp-cta/5 transition-all shadow-inner">
+              <button className="p-3 text-slate-400 hover:text-btp-cta transition-colors">
+                <Plus size={20} />
+              </button>
+              <input
+                type="text"
+                value={msgInputValue}
+                onChange={(e) => setMsgInputValue(e.target.value)}
+                placeholder="Tapez un message pour l'équipe..."
+                className="flex-1 bg-transparent border-0 focus:ring-0 text-sm font-medium py-3"
               />
-              <ConversationHeader.Actions>
-                <button onClick={() => handleInteraction("Appel", "Appel vocal en cours...")} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><MessageSquare size={18} /></button>
-                <VoiceCallButton />
-                <VideoCallButton />
-                <button onClick={() => handleInteraction("Fichiers", "Accès au cloud projet...")} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><FileText size={18} /></button>
-              </ConversationHeader.Actions>
-            </ConversationHeader>
-
-            <MessageList
-              style={{ backgroundColor: '#fff' }}
-              typingIndicator={activeConversation === 0 ? <TypingIndicator content="Alice est en train d'écrire..." /> : null}
-            >
-              <MessageSeparator content="Archives Mars 2026" />
-              <Message
-                model={{
-                  message: "Bonjour à tous, point météo : attention aux orages sur San Pedro cet après-midi.",
-                  sentTime: "08:30",
-                  sender: "Jean-Marc Koné",
-                  direction: "incoming",
-                  position: "single"
-                }}
-              >
-                <Avatar name="JK" src="https://i.pravatar.cc/150?u=jk" />
-              </Message>
-              <Message
-                model={{
-                  message: "Bien reçu, on a sécurisé les grues. Le béton a déjà pris.",
-                  sentTime: "09:12",
-                  sender: "Moussa Diakité",
-                  direction: "incoming",
-                  position: "single"
-                }}
-              >
-                <Avatar name="MD" src="https://i.pravatar.cc/150?u=md" />
-              </Message>
-              <Message
-                model={{
-                  message: "Parfait. Quelqu'un peut envoyer les photos du site Anyama ?",
-                  sentTime: "10:05",
-                  sender: "Moi",
-                  direction: "outgoing",
-                  position: "single"
-                }}
-              />
-              <Message
-                model={{
-                  message: "Je les uploade dans la section Documents du projet tout de suite !",
-                  sentTime: "10:08",
-                  sender: "Alice Kouassi",
-                  direction: "incoming",
-                  position: "last"
-                }}
-              >
-                <Avatar name="AK" src="https://i.pravatar.cc/150?u=ak" />
-              </Message>
-            </MessageList>
-
-            <MessageInput
-              placeholder="Écrivez votre message ici..."
-              value={msgInputValue}
-              onChange={val => setMsgInputValue(val)}
-              onSend={() => {
-                setMsgInputValue("");
-                handleInteraction("Message Envoyé", "Votre message a été diffusé.");
-              }}
-              style={{ padding: '20px 30px' }}
-              attachButton={true}
-            />
-          </ChatContainer>
-        </MainContainer>
+              <button className="btn-primary w-12 h-12 !p-0 flex items-center justify-center rounded-2xl shadow-lg shadow-orange-200 active:scale-90 transition-transform">
+                <Send size={20} />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-const ActionsView = () => (
-  <div className="max-w-4xl mx-auto py-10">
-    <div className="glass-card bg-white border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-[24px]">
-      <header className="mb-8 px-2 flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-heading font-black tracking-tight text-slate-900">Liste de Contrôle du Chantier</h1>
-          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Actions & Validations</p>
+const ActionsView = () => {
+  const [completedActions, setCompletedActions] = useState([]);
+  const [filter, setFilter] = useState('all');
+
+  const actions = [
+    { id: 1, title: "Valider facture Ciment Holcim", project: "Echangeur Akwaba", priority: "high", date: "Demain", status: "En attente", addedBy: "Jean-Marc Koné", initials: "JK", info: "Paiement de 12.4M CFA pour le secteur Nord." },
+    { id: 2, title: "Rapport HSE mensuel", project: "CHU Yamoussoukro", priority: "medium", date: "12 Mars", status: "À signer", addedBy: "Alice Kouassi", initials: "AK", info: "Vérifier les protocoles de sécurité du R+4." },
+    { id: 3, title: "Approuver devis climatisation", project: "Logements Anyama", priority: "low", date: "15 Mars", status: "En révision", addedBy: "Moussa Diakité", initials: "MD", info: "Consultation de 3 fournisseurs locaux." },
+    { id: 4, title: "Contrôle technique grue G1", project: "Pont Cocody", priority: "high", date: "Aujourd'hui", status: "Urgent", addedBy: "Koffi N'Goran", initials: "KN", info: "Risque de retard sur le coulage principal." },
+    { id: 5, title: "Vérifier planning béton", project: "Barrage Buyo", priority: "medium", date: "13 Mars", status: "En attente", addedBy: "Karim Ouattara", initials: "KO", info: "Coordination avec l'usine de Soubré." },
+    { id: 6, title: "Commander ferraillage R+2", project: "Stade San Pedro", priority: "low", date: "16 Mars", status: "À valider", addedBy: "Awa Sidibé", initials: "AS", info: "Quantités estimées : 45 tonnes." }
+  ];
+
+  const handleComplete = (id, title) => {
+    setCompletedActions(prev => [...prev, id]);
+    handleInteraction(`✓ ${title}`, "Action marquée comme terminée.");
+  };
+
+  const getPriorityStyles = (priority) => {
+    switch (priority) {
+      case 'high': return 'border-l-red-500 bg-red-50/20';
+      case 'medium': return 'border-l-orange-500 bg-orange-50/20';
+      default: return 'border-l-emerald-500 bg-emerald-50/20';
+    }
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto space-y-8">
+      <header className="flex justify-between items-end">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-btp-cta rounded-full animate-ping"></div>
+            <span className="text-[10px] text-btp-secondary font-black uppercase tracking-[0.3em]">Module de Gestion Opérationnelle</span>
+          </div>
+          <h1 className="text-4xl font-heading font-black tracking-tight text-slate-900">Actions & Validations</h1>
+          <p className="text-slate-500 text-sm font-medium">Supervisez et validez les étapes critiques de vos chantiers en un clic.</p>
         </div>
-        <div className="flex gap-2">
-          <span className="p-2 bg-slate-50 rounded-lg text-slate-400 cursor-pointer hover:text-black transition-colors"><Settings size={18} /></span>
+        <div className="flex bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm">
+          {['all', 'high', 'low'].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filter === f ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'
+                }`}
+            >
+              {f === 'all' ? 'Toutes' : f === 'high' ? 'Urgentes' : 'Secondaires'}
+            </button>
+          ))}
         </div>
       </header>
 
-      <div className="space-y-4">
-        {[
-          { title: "Coulage dalle R+1", status: "En attente", author: "Jean-Marc K.", completed: false },
-          { title: "Vérification étanchéité", status: "Terminé", author: "Alice K.", completed: true },
-          { title: "Installation échafaudages", status: "En cours", author: "Moussa D.", completed: false },
-          { title: "Livraison gravier (10 tonnes)", status: "Retardé", author: "Koffi N.", completed: false }
-        ].map((action, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${action.completed ? 'bg-slate-50/50 border-slate-100' : 'bg-white border-slate-200 hover:border-black'}`}
-          >
-            <div className="flex items-center gap-5">
-              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${action.completed ? 'bg-btp-accent-green text-white' : 'bg-white border-2 border-slate-100 text-slate-200'}`}>
-                {action.completed ? <CheckSquare size={16} /> : <div className="w-4 h-4 rounded-full border-2 border-slate-100"></div>}
-              </div>
-              <div>
-                <h3 className={`font-bold transition-colors ${action.completed ? 'text-slate-400 line-through' : 'text-slate-900'}`}>{action.title}</h3>
-                <div className="flex items-center gap-3 mt-1">
-                  <span className={`text-[10px] font-black uppercase tracking-widest ${action.status === 'Terminé' ? 'text-green-500' : action.status === 'Retardé' ? 'text-red-500' : 'text-slate-400'}`}>
-                    • {action.status}
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-medium">Ajouté par : <span className="text-slate-600 font-bold">{action.author}</span></span>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {actions.map((action, i) => {
+          const isCompleted = completedActions.includes(action.id);
+          const priorityColor = action.priority === 'high' ? 'text-red-500' : action.priority === 'medium' ? 'text-orange-500' : 'text-emerald-500';
+
+          return (
+            <motion.div
+              key={action.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: isCompleted ? 0.5 : 1, scale: 1 }}
+              whileHover={{ y: -8, shadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}
+              className={`glass-card p-0 overflow-hidden border-0 bg-white ring-1 ring-slate-100 flex flex-col h-full ${isCompleted ? 'grayscale pointer-events-none' : ''}`}
+            >
+              <div className={`h-1.5 w-full ${action.priority === 'high' ? 'bg-red-500' : action.priority === 'medium' ? 'bg-orange-500' : 'bg-emerald-500'}`}></div>
+
+              <div className="p-6 flex-1 flex flex-col">
+                <div className="flex justify-between items-start mb-4">
+                  <div className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider ${action.priority === 'high' ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-500'
+                    }`}>
+                    {action.priority === 'high' ? 'Priorité Haute' : 'Standard'}
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{action.date}</span>
+                </div>
+
+                <h3 className="text-lg font-heading font-bold text-slate-900 mb-2 leading-tight">{action.title}</h3>
+                <p className="text-xs text-slate-500 font-medium mb-4">{action.info}</p>
+
+                <div className="mt-auto space-y-4 pt-4 border-t border-slate-50">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-btp-primary/10 text-btp-primary flex items-center justify-center font-bold text-[10px]">
+                        {action.initials}
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{action.addedBy}</span>
+                    </div>
+                    <span className="text-[10px] text-btp-cta font-black uppercase tracking-[0.2em]">{action.project}</span>
+                  </div>
+
+                  <button
+                    onClick={() => handleComplete(action.id, action.title)}
+                    className={`w-full py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${isCompleted
+                        ? 'bg-green-500 text-white cursor-default'
+                        : 'bg-slate-900 text-white hover:bg-btp-cta hover:shadow-xl hover:shadow-orange-100 active:scale-95'
+                      }`}
+                  >
+                    {isCompleted ? '✓ Dossier Clos' : 'Valider maintenant'}
+                  </button>
                 </div>
               </div>
-            </div>
-            <button className={`p-2 rounded-lg transition-colors ${action.completed ? 'text-slate-300' : 'text-slate-400 hover:bg-slate-50 hover:text-black'}`}>
-              <ArrowUpRight size={18} />
-            </button>
-          </motion.div>
-        ))}
+            </motion.div>
+          );
+        })}
       </div>
 
-      <button
-        onClick={() => handleInteraction("Nouvelle Tâche", "Ouverture du formulaire rapide...")}
-        className="mt-8 w-full py-4 border-2 border-dashed border-slate-100 rounded-2xl text-slate-400 font-bold text-sm flex items-center justify-center gap-2 hover:border-black hover:text-black hover:bg-slate-50/30 transition-all cursor-pointer"
-      >
-        <Plus size={18} /> Ajouter une tâche
-      </button>
+      <div className="pt-10 flex justify-center">
+        <button className="flex items-center gap-2 px-8 py-3 bg-white border border-slate-200 rounded-full text-slate-400 font-bold text-xs hover:text-btp-cta hover:border-btp-cta transition-all group">
+          <Plus size={16} className="group-hover:rotate-90 transition-transform" />
+          Charger l'Historique des Actions
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-const GpsView = () => (
-  <div className="h-full flex flex-col">
-    <header className="mb-6 flex justify-between items-center">
-      <div>
-        <h1 className="text-4xl font-heading font-bold tracking-tight">Suivi GPS Live</h1>
-        <p className="text-btp-secondary font-medium mt-1">Localisation en temps réel de la flotte et des engins lourds.</p>
-      </div>
-      <div className="flex gap-2">
-        <span className="px-4 py-2 bg-green-100 text-green-700 rounded-full text-xs font-bold flex items-center gap-2">
-          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-          82 Véhicules Connectés
-        </span>
-        <span className="px-4 py-2 bg-slate-100 text-slate-600 rounded-full text-xs font-bold">
-          4 Alertes Hors-Zone
-        </span>
-      </div>
-    </header>
+const GpsView = () => {
+  const [selectedSite, setSelectedSite] = useState(null);
 
-    <div className="flex-1 flex gap-6 min-h-0">
-      <div className="w-80 flex flex-col gap-4 overflow-y-auto pr-2">
-        {[
-          { id: "MX-204", type: "Bulldozer", driver: "K. Kouadio", site: "Abidjan-Bassam", speed: "12 km/h", status: "active" },
-          { id: "TR-502", type: "Camion Benne", driver: "A. Diallo", site: "Yamoussoukro", speed: "45 km/h", status: "active" },
-          { id: "EX-101", type: "Excavatrice", driver: "S. Traoré", site: "Buyo", speed: "0 km/h", status: "error" },
-          { id: "MX-205", type: "Niveleuse", driver: "P. Yao", site: "Cocody", speed: "8 km/h", status: "active" },
-          { id: "TR-508", type: "Camion Ciment", driver: "M. Bakayoko", site: "Anyama", speed: "32 km/h", status: "warning" }
-        ].map((v, i) => (
-          <motion.div
-            key={i}
-            whileHover={{ x: 5 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => handleInteraction(`Véhicule : ${v.id}`, `Chauffeur : ${v.driver} | Vitesse : ${v.speed}`)}
-            className="glass-card p-4 hover:border-btp-cta/30 transition-colors cursor-pointer group"
-          >
-            <div className="flex justify-between items-start mb-2">
-              <span className="text-[10px] font-black bg-slate-100 px-2 py-0.5 rounded text-slate-500 group-hover:bg-btp-cta/10 group-hover:text-btp-cta transition-colors">{v.id}</span>
-              <div className={`w-2 h-2 rounded-full ${v.status === 'active' ? 'bg-green-500' : v.status === 'warning' ? 'bg-orange-500' : 'bg-red-500'}`}></div>
-            </div>
-            <p className="font-bold text-sm tracking-tight">{v.type}</p>
-            <p className="text-[11px] text-btp-secondary font-medium">{v.driver} • {v.site}</p>
-            <div className="mt-4 flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              <span>Vitesse</span>
-              <span className="text-slate-900">{v.speed}</span>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+  // Chantiers avec positions approximatives sur la carte CIV (en % de la carte)
+  const chantiers = [
+    { id: 1, name: "Autoroute Abidjan-Bassam", city: "Grand-Bassam", progress: 75, status: "active", chef: "K. Kouadio", equipes: 4, engins: 12, x: 72, y: 78 },
+    { id: 2, name: "Pont Cocody-Plateau", city: "Abidjan", progress: 45, status: "warning", chef: "M. Diakité", equipes: 3, engins: 8, x: 68, y: 76 },
+    { id: 3, name: "Barrage Buyo (Extension)", city: "Buyo", progress: 20, status: "error", chef: "S. Traoré", equipes: 2, engins: 15, x: 38, y: 62 },
+    { id: 4, name: "Logements Sociaux Anyama", city: "Anyama", progress: 90, status: "active", chef: "P. Yao", equipes: 5, engins: 6, x: 66, y: 73 },
+    { id: 5, name: "Échangeur Akwaba", city: "Abidjan-Plateau", progress: 62, status: "active", chef: "A. Diallo", equipes: 6, engins: 18, x: 70, y: 77 },
+    { id: 6, name: "Stade San Pedro", city: "San Pedro", progress: 98, status: "active", chef: "J. Koné", equipes: 3, engins: 5, x: 35, y: 82 },
+    { id: 7, name: "Centrale Solaire", city: "Boundiali", progress: 15, status: "active", chef: "K. Ouattara", equipes: 2, engins: 4, x: 42, y: 22 },
+    { id: 8, name: "CHU de Yamoussoukro", city: "Yamoussoukro", progress: 40, status: "error", chef: "A. Kouassi", equipes: 4, engins: 10, x: 52, y: 58 },
+    { id: 9, name: "Pont Tiassalé", city: "Tiassalé", progress: 100, status: "active", chef: "M. Bakayoko", equipes: 1, engins: 2, x: 58, y: 68 },
+    { id: 10, name: "Port Sec de Bouaké", city: "Bouaké", progress: 30, status: "warning", chef: "I. Touré", equipes: 3, engins: 9, x: 55, y: 45 },
+    { id: 11, name: "Barrage de Soubré 2", city: "Soubré", progress: 35, status: "active", chef: "D. Bamba", equipes: 5, engins: 20, x: 36, y: 70 },
+    { id: 12, name: "Route Korhogo-Ferkessédougou", city: "Korhogo", progress: 55, status: "active", chef: "Y. Coulibaly", equipes: 4, engins: 14, x: 48, y: 18 },
+  ];
 
-      <div className="flex-1 bg-slate-200 rounded-3xl relative overflow-hidden shadow-inner border border-slate-300">
-        {/* Mock Map Background */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none grid grid-cols-12 grid-rows-12 gap-1 p-4">
-          {Array.from({ length: 144 }).map((_, i) => (
-            <div key={i} className="border border-slate-400/20 rounded-sm"></div>
-          ))}
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'active': return { bg: 'bg-green-500', ring: 'ring-green-400/30', text: 'text-green-600', label: 'En cours' };
+      case 'warning': return { bg: 'bg-orange-500', ring: 'ring-orange-400/30', text: 'text-orange-600', label: 'Retard' };
+      case 'error': return { bg: 'bg-red-500', ring: 'ring-red-400/30', text: 'text-red-600', label: 'Urgent' };
+      default: return { bg: 'bg-slate-500', ring: 'ring-slate-400/30', text: 'text-slate-600', label: 'Inconnu' };
+    }
+  };
+
+  return (
+    <div className="h-[calc(100vh-140px)] flex flex-col gap-6">
+      <header className="flex justify-between items-center">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.6)]"></div>
+            <span className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em]">Cartographie Nationale des Chantiers</span>
+          </div>
+          <h1 className="text-4xl font-heading font-black tracking-tight text-slate-900">Carte de la Côte d'Ivoire</h1>
+          <p className="text-slate-500 text-sm font-medium">Tous vos chantiers répertoriés en temps réel sur le territoire national.</p>
         </div>
-
-        {/* Visual Paths */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
-          <path d="M100 200 L300 400 L500 350 L700 500" stroke="#F97316" strokeWidth="4" fill="none" strokeDasharray="8,8" />
-          <path d="M50 500 L250 300 L600 200" stroke="#334155" strokeWidth="4" fill="none" strokeDasharray="8,8" />
-        </svg>
-
-        {/* Vehicle Markers */}
-        <motion.div drag whileHover={{ scale: 1.2 }} className="absolute top-1/4 left-1/3 p-2 bg-btp-cta text-white rounded-lg shadow-xl cursor-grab active:cursor-grabbing">
-          <Truck size={20} />
-          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white text-slate-900 px-2 py-1 rounded text-[10px] font-bold shadow-sm border border-slate-100">TR-502 : 45 km/h</div>
-        </motion.div>
-
-        <motion.div drag whileHover={{ scale: 1.2 }} className="absolute bottom-1/3 right-1/4 p-2 bg-slate-900 text-white rounded-lg shadow-xl cursor-grab active:cursor-grabbing">
-          <HardHat size={20} className="text-btp-cta" />
-          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white text-slate-900 px-2 py-1 rounded text-[10px] font-bold shadow-sm border border-slate-100">MX-204 : En chargement</div>
-        </motion.div>
-
-        {/* Map Controls */}
-        <div className="absolute top-4 right-4 flex flex-col gap-2">
-          <button
-            onClick={() => handleInteraction("Zoom (+)", "Agrandissement de la carte...")}
-            className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg font-bold text-lg hover:text-btp-cta active:scale-90 transition-all"
-          >+</button>
-          <button
-            onClick={() => handleInteraction("Zoom (-)", "Réduction de la carte...")}
-            className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg font-bold text-lg hover:text-btp-cta active:scale-90 transition-all"
-          >-</button>
-        </div>
-
-        <div className="absolute bottom-6 left-6 p-4 bg-white/80 backdrop-blur-md rounded-2xl border border-white/50 shadow-2xl max-w-sm">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-orange-100 text-btp-cta rounded-xl flex items-center justify-center">
-              <ShieldAlert size={20} />
+        <div className="flex gap-3 items-center">
+          <div className="flex items-center gap-4 px-5 py-3 bg-white rounded-2xl border border-slate-100 shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-green-500"></span>
+              <span className="text-[10px] font-bold text-slate-500 uppercase">{chantiers.filter(c => c.status === 'active').length} Actifs</span>
             </div>
-            <div>
-              <p className="text-[10px] font-black text-btp-cta uppercase tracking-widest">Alerte Géorepérage</p>
-              <p className="text-xs font-bold text-slate-900">Sortie de zone non autorisée</p>
+            <div className="w-px h-4 bg-slate-200"></div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-orange-500"></span>
+              <span className="text-[10px] font-bold text-slate-500 uppercase">{chantiers.filter(c => c.status === 'warning').length} Retard</span>
+            </div>
+            <div className="w-px h-4 bg-slate-200"></div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-red-500"></span>
+              <span className="text-[10px] font-bold text-slate-500 uppercase">{chantiers.filter(c => c.status === 'error').length} Urgents</span>
             </div>
           </div>
-          <p className="text-[11px] text-btp-secondary font-medium">Le véhicule <span className="font-bold text-slate-900 underline">TR-508</span> a quitté le périmètre du chantier Anyama à 16:15.</p>
+          <span className="text-xs font-black bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-lg">{chantiers.length} Chantiers</span>
+        </div>
+      </header>
+
+      <div className="flex-1 flex gap-6 min-h-0">
+        {/* Sites List */}
+        <div className="w-80 flex flex-col gap-3 overflow-y-auto pr-2 scrollbar-hide">
+          {chantiers.map((c) => {
+            const sc = getStatusColor(c.status);
+            return (
+              <motion.div
+                key={c.id}
+                whileHover={{ x: 5 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSelectedSite(c)}
+                className={`p-4 rounded-2xl border cursor-pointer transition-all ${selectedSite?.id === c.id ? 'bg-white shadow-xl border-btp-cta/40 ring-2 ring-btp-cta/10' : 'bg-white/60 border-slate-100 hover:bg-white hover:border-slate-200'
+                  }`}
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-sm text-slate-900 truncate leading-tight">{c.name}</h4>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5 flex items-center gap-1"><MapPin size={10} /> {c.city}</p>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${sc.text} ${sc.bg.replace('bg-', 'bg-')}/10`}>{sc.label}</span>
+                </div>
+                <div className="mb-2">
+                  <div className="flex justify-between text-[10px] font-bold mb-1">
+                    <span className="text-slate-400">Progression</span>
+                    <span className="text-slate-700">{c.progress}%</span>
+                  </div>
+                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full ${c.progress === 100 ? 'bg-green-500' : 'bg-btp-cta'}`} style={{ width: `${c.progress}%` }}></div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold">
+                  <span>{c.equipes} équipes</span>
+                  <span>{c.engins} engins</span>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Map of Côte d'Ivoire */}
+        <div className="flex-1 bg-[#1a2332] rounded-[2.5rem] relative shadow-2xl border border-slate-700/50 overflow-hidden">
+          {/* Subtle grid */}
+          <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+
+          {/* SVG Map of Côte d'Ivoire */}
+          <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full p-8 pointer-events-none" preserveAspectRatio="xMidYMid meet">
+            {/* Country outline - simplified shape of CIV */}
+            <path d="
+              M 42,5 L 48,4 L 55,5 L 58,8 L 62,7 L 65,10 L 68,9 L 72,12 L 75,11
+              L 78,14 L 76,18 L 78,22 L 75,26 L 77,30 L 75,34
+              L 78,38 L 76,42 L 78,46 L 76,50 L 78,54 L 76,58
+              L 78,62 L 75,66 L 78,70 L 76,74 L 78,78 L 74,80
+              L 70,82 L 66,80 L 62,82 L 58,80 L 54,82 L 50,84
+              L 46,82 L 42,84 L 38,82 L 34,84 L 30,82
+              L 28,78 L 26,74 L 28,70 L 25,66 L 27,62
+              L 24,58 L 26,54 L 24,50 L 26,46 L 24,42
+              L 26,38 L 28,34 L 26,30 L 28,26 L 30,22
+              L 28,18 L 30,14 L 32,10 L 35,8 L 38,6 Z
+            " fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" strokeWidth="0.5" strokeLinejoin="round" />
+
+            {/* Internal region lines */}
+            <path d="M 35,30 L 55,28 L 70,35" stroke="rgba(255,255,255,0.05)" strokeWidth="0.3" fill="none" strokeDasharray="2,2" />
+            <path d="M 30,50 L 50,48 L 72,55" stroke="rgba(255,255,255,0.05)" strokeWidth="0.3" fill="none" strokeDasharray="2,2" />
+            <path d="M 35,70 L 55,68 L 70,72" stroke="rgba(255,255,255,0.05)" strokeWidth="0.3" fill="none" strokeDasharray="2,2" />
+
+            {/* City labels */}
+            <text x="50" y="96" fill="rgba(255,255,255,0.15)" fontSize="2.5" textAnchor="middle" fontWeight="900" letterSpacing="0.5">GOLFE DE GUINÉE</text>
+            <text x="15" y="50" fill="rgba(255,255,255,0.08)" fontSize="2" textAnchor="middle" fontWeight="bold" transform="rotate(-90,15,50)">LIBÉRIA</text>
+            <text x="88" y="50" fill="rgba(255,255,255,0.08)" fontSize="2" textAnchor="middle" fontWeight="bold" transform="rotate(90,88,50)">GHANA</text>
+            <text x="40" y="2" fill="rgba(255,255,255,0.08)" fontSize="2" textAnchor="middle" fontWeight="bold">MALI</text>
+            <text x="62" y="2" fill="rgba(255,255,255,0.08)" fontSize="2" textAnchor="middle" fontWeight="bold">BURKINA FASO</text>
+          </svg>
+
+          {/* Chantier Markers */}
+          {chantiers.map((c) => {
+            const sc = getStatusColor(c.status);
+            const isSelected = selectedSite?.id === c.id;
+            return (
+              <motion.div
+                key={c.id}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: c.id * 0.08, type: 'spring', stiffness: 200 }}
+                className="absolute cursor-pointer group/pin z-10"
+                style={{ left: `${c.x}%`, top: `${c.y}%`, transform: 'translate(-50%, -50%)' }}
+                onClick={() => setSelectedSite(c)}
+              >
+                {/* Pulse ring */}
+                <div className={`absolute inset-0 rounded-full ${sc.bg} opacity-30 ${c.status === 'error' ? 'animate-ping' : 'animate-pulse'}`} style={{ transform: 'scale(2.5)' }}></div>
+
+                {/* Pin */}
+                <div className={`relative w-5 h-5 rounded-full ${sc.bg} border-2 border-white shadow-lg flex items-center justify-center transition-transform ${isSelected ? 'scale-150 ring-4 ' + sc.ring : 'group-hover/pin:scale-125'}`}>
+                  <HardHat size={10} className="text-white" />
+                </div>
+
+                {/* Label */}
+                <div className={`absolute left-1/2 -translate-x-1/2 whitespace-nowrap transition-all pointer-events-none ${isSelected ? 'bottom-full mb-3 opacity-100 scale-100' : 'bottom-full mb-2 opacity-0 group-hover/pin:opacity-100 scale-90 group-hover/pin:scale-100'}`}>
+                  <div className="bg-white/95 backdrop-blur-md px-3 py-2 rounded-xl shadow-2xl border border-slate-200 text-center">
+                    <p className="text-[10px] font-black text-slate-900 leading-tight">{c.name}</p>
+                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">{c.city} • {c.progress}%</p>
+                  </div>
+                  <div className="w-2 h-2 bg-white border-b border-r border-slate-200 rotate-45 mx-auto -mt-1"></div>
+                </div>
+              </motion.div>
+            );
+          })}
+
+          {/* Map Controls */}
+          <div className="absolute top-6 right-6 flex flex-col gap-2 z-30">
+            <button className="w-10 h-10 bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl flex items-center justify-center text-white text-lg font-bold hover:bg-btp-cta transition-all">+</button>
+            <button className="w-10 h-10 bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl flex items-center justify-center text-white text-lg font-bold hover:bg-btp-cta transition-all">−</button>
+          </div>
+
+          {/* Selected site detail panel */}
+          <AnimatePresence>
+            {selectedSite && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className="absolute bottom-6 left-6 right-6 z-20 pointer-events-auto"
+              >
+                <div className="bg-slate-900/80 backdrop-blur-2xl rounded-[2rem] border border-white/10 p-6 flex items-center gap-6">
+                  <div className={`w-14 h-14 rounded-2xl ${getStatusColor(selectedSite.status).bg}/20 flex items-center justify-center shrink-0`}>
+                    <HardHat size={28} className={getStatusColor(selectedSite.status).text} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-white font-bold text-lg truncate">{selectedSite.name}</h3>
+                    <p className="text-white/50 text-xs font-bold uppercase tracking-wider mt-0.5 flex items-center gap-1.5">
+                      <MapPin size={12} /> {selectedSite.city}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-8 shrink-0">
+                    <div className="text-center">
+                      <p className="text-2xl font-black text-white">{selectedSite.progress}%</p>
+                      <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest">Avancement</p>
+                    </div>
+                    <div className="w-px h-10 bg-white/10"></div>
+                    <div className="text-center">
+                      <p className="text-2xl font-black text-btp-cta">{selectedSite.equipes}</p>
+                      <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest">Équipes</p>
+                    </div>
+                    <div className="w-px h-10 bg-white/10"></div>
+                    <div className="text-center">
+                      <p className="text-2xl font-black text-white">{selectedSite.engins}</p>
+                      <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest">Engins</p>
+                    </div>
+                    <div className="w-px h-10 bg-white/10"></div>
+                    <div className="text-center">
+                      <p className="text-sm font-black text-white">{selectedSite.chef}</p>
+                      <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest">Chef Chantier</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleInteraction(`Chantier : ${selectedSite.name}`, `Ouverture du dossier technique complet...`)}
+                    className="btn-primary py-3 px-6 text-xs shrink-0 shadow-lg shadow-orange-500/20"
+                  >
+                    Ouvrir le Dossier
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Title overlay */}
+          <div className="absolute top-6 left-6 z-20">
+            <div className="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 px-5 py-3">
+              <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em] mb-0.5">République de</p>
+              <p className="text-white font-heading font-black text-lg tracking-tight">CÔTE D'IVOIRE</p>
+              <p className="text-[10px] text-btp-cta font-bold mt-1">{chantiers.length} chantiers actifs sur le territoire</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const HrView = () => (
   <div className="max-w-5xl mx-auto">
@@ -1153,7 +1437,7 @@ const App = () => {
     }
 
     switch (activeTab) {
-      case 'dashboard': return <DashboardView />;
+      case 'dashboard': return <DashboardView setActiveTab={setActiveTab} />;
       case 'projects': return <ProjectsView onSelectProject={(p) => setSelectedProject(p)} />;
       case 'gps': return <GpsView />;
       case 'hr': return <HrView />;
@@ -1170,17 +1454,17 @@ const App = () => {
       <Toaster richColors position="bottom-right" closeButton />
       {/* Sidebar */}
       <aside className="w-72 bg-white border-r border-slate-200 p-6 flex flex-col h-full overflow-y-auto shrink-0 scrollbar-hide">
-        <div className="flex flex-col gap-4 mb-10 px-2 shrink-0 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-          <div className="w-48 h-20 flex items-start justify-start transition-transform hover:scale-105">
+        <div className="flex items-center gap-3 mb-10 px-2 shrink-0 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
+          <div className="w-12 h-12 flex items-center justify-center transition-transform hover:rotate-6">
             <img
               src="/assets/EMBLEME_FOND_BLANC__1_-removebg-preview.png"
               alt="Kayry BTP Logo"
-              className="w-full h-full object-contain object-left"
+              className="w-full h-full object-contain"
             />
           </div>
-          <div className="pl-1">
-            <h2 className="text-2xl font-heading font-black tracking-tighter leading-none text-black">KAYRY BTP</h2>
-            <span className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.3em]">Manager Pro</span>
+          <div>
+            <h2 className="text-xl font-heading font-black tracking-tighter leading-none text-black">KAYRY BTP</h2>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] block mt-0.5">Manager Pro</span>
           </div>
         </div>
 
@@ -1204,10 +1488,10 @@ const App = () => {
           >
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-2">
-                <CloudRain className="text-btp-cta" size={18} />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-btp-cta">Alerte Météo AI</span>
+                <CloudRain className="text-btp-cta drop-shadow-[0_0_8px_rgba(249,115,22,0.4)]" size={18} />
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#fb923c] !text-[#fb923c] brightness-125">Alerte Météo AI</span>
               </div>
-              <p className="text-[11px] leading-relaxed opacity-90 font-medium">
+              <p className="text-[11px] leading-relaxed opacity-90 font-medium text-white/90">
                 Saison des pluies prévue le <span className="text-btp-cta font-black">15 Mai</span>.
                 Optimisez vos coulages de béton à Yamoussoukro cette semaine.
               </p>

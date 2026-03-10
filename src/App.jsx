@@ -591,7 +591,7 @@ const ChatView = () => {
           <p className="text-slate-500 text-sm font-medium mt-1">Plateforme de communication sécurisée pour les équipes de chantier.</p>
         </div>
         <div className="flex gap-2">
-           <span className="px-3 py-1 bg-black text-white rounded-full text-[10px] font-black uppercase tracking-widest">Live</span>
+          <span className="px-3 py-1 bg-black text-white rounded-full text-[10px] font-black uppercase tracking-widest">Live</span>
         </div>
       </header>
 
@@ -599,7 +599,7 @@ const ChatView = () => {
         <MainContainer responsive style={{ border: 'none' }}>
           <ChatSidebar position="left" scrollable={true} className="border-r border-slate-50" style={{ width: '350px', backgroundColor: '#fff' }}>
             <div className="p-6 border-b border-slate-50">
-               <ChatSearch placeholder="Rechercher une équipe..." />
+              <ChatSearch placeholder="Rechercher une équipe..." />
             </div>
             <ConversationList>
               {conversations.map((c, i) => (
@@ -1149,17 +1149,17 @@ const App = () => {
       <Toaster richColors position="bottom-right" closeButton />
       {/* Sidebar */}
       <aside className="w-72 bg-white border-r border-slate-200 p-6 flex flex-col h-full overflow-y-auto shrink-0 scrollbar-hide">
-        <div className="flex items-center gap-3 mb-10 px-2 shrink-0 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-          <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center p-1 shadow-xl shadow-slate-200 rotate-2 border border-slate-800 transition-transform hover:rotate-0">
-            <img 
-              src="/assets/EMBLEME_FOND_BLANC__1_-removebg-preview.png" 
-              alt="Kayry BTP Logo" 
-              className="w-full h-full object-contain filter invert"
+        <div className="flex flex-col gap-4 mb-10 px-2 shrink-0 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
+          <div className="w-48 h-20 flex items-start justify-start transition-transform hover:scale-105">
+            <img
+              src="/assets/EMBLEME_FOND_BLANC__1_-removebg-preview.png"
+              alt="Kayry BTP Logo"
+              className="w-full h-full object-contain object-left"
             />
           </div>
-          <div>
-            <h2 className="text-xl font-heading font-black tracking-tight leading-none text-black">KAYRY BTP</h2>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Manager Pro</span>
+          <div className="pl-1">
+            <h2 className="text-2xl font-heading font-black tracking-tighter leading-none text-black">KAYRY BTP</h2>
+            <span className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.3em]">Manager Pro</span>
           </div>
         </div>
 

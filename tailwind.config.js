@@ -7,12 +7,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        'btp-primary': '#64748B',
-        'btp-secondary': '#94A3B8',
-        'btp-cta': '#F97316',
-        'btp-background': '#F8FAFC',
-        'btp-text': '#334155',
-        'btp-accent-green': '#10B981',
+        'btp-primary': 'var(--color-primary)',
+        'btp-secondary': 'var(--color-secondary)',
+        'btp-cta': 'var(--color-cta)',
+        'btp-background': 'var(--color-background)',
+        'btp-text': 'var(--color-text)',
+        'btp-accent-green': 'var(--color-accent-green)',
       },
       fontFamily: {
         'heading': ['Space Grotesk', 'sans-serif'],

@@ -578,22 +578,29 @@ const ChatView = () => {
 
   const conversations = [
     { name: "Canal Général", lastMsg: "Attention aux orages sur San Pedro...", status: "available", avatar: null, unread: 2 },
-    { name: "Direction Technique", lastMsg: "Le planning a été mis à jour.", status: "dnd", avatar: "JM", info: "Jean-Marc Koné" },
-    { name: "Chantier Bassam", lastMsg: "Béton livré à 14:00.", status: "available", avatar: "B", info: "Moussa Diakité" },
+    { name: "Direction Technique", lastMsg: "Le planning a été mis à jour.", status: "dnd", avatar: "JK", info: "Jean-Marc Koné" },
+    { name: "Chantier Bassam", lastMsg: "Béton livré à 14:00.", status: "available", avatar: "MD", info: "Moussa Diakité" },
     { name: "Equipe RH", lastMsg: "Fiches de paie prêtes.", status: "away", avatar: "RH" }
   ];
 
   return (
-    <div className="max-w-6xl mx-auto h-[calc(100vh-120px)] flex flex-col">
-      <header className="mb-6">
-        <h1 className="text-3xl font-heading font-bold">Centre de Communication</h1>
-        <p className="text-btp-secondary text-sm font-medium">Collaboration Teams-style pour vos équipes BTP.</p>
+    <div className="max-w-7xl mx-auto h-[calc(100vh-140px)] flex flex-col">
+      <header className="mb-6 flex justify-between items-end">
+        <div>
+          <h1 className="text-4xl font-heading font-black tracking-tight text-black">Kayry Connect</h1>
+          <p className="text-slate-500 text-sm font-medium mt-1">Plateforme de communication sécurisée pour les équipes de chantier.</p>
+        </div>
+        <div className="flex gap-2">
+           <span className="px-3 py-1 bg-black text-white rounded-full text-[10px] font-black uppercase tracking-widest">Live</span>
+        </div>
       </header>
 
-      <div className="flex-1 rounded-2xl shadow-2xl overflow-hidden border border-slate-200 bg-white flex" style={{ height: "600px" }}>
-        <MainContainer responsive>
-          <ChatSidebar position="left" scrollable={false} className="border-r border-slate-100" style={{ width: '300px' }}>
-            <ChatSearch placeholder="Rechercher une conversation..." className="p-4" />
+      <div className="flex-1 rounded-3xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden border border-slate-100 bg-white flex" style={{ minHeight: "750px" }}>
+        <MainContainer responsive style={{ border: 'none' }}>
+          <ChatSidebar position="left" scrollable={true} className="border-r border-slate-50" style={{ width: '350px', backgroundColor: '#fff' }}>
+            <div className="p-6 border-b border-slate-50">
+               <ChatSearch placeholder="Rechercher une équipe..." />
+            </div>
             <ConversationList>
               {conversations.map((c, i) => (
                 <Conversation
@@ -604,6 +611,7 @@ const ChatView = () => {
                   active={activeConversation === i}
                   onClick={() => setActiveConversation(i)}
                   unreadDot={c.unread > 0}
+                  style={{ padding: '15px 20px' }}
                 >
                   <Avatar name={c.avatar || c.name[0]} status={c.status} />
                 </Conversation>
@@ -611,23 +619,27 @@ const ChatView = () => {
             </ConversationList>
           </ChatSidebar>
 
-          <ChatContainer className="bg-slate-50/30">
-            <ConversationHeader>
+          <ChatContainer style={{ backgroundColor: '#fcfcfc' }}>
+            <ConversationHeader style={{ padding: '15px 25px', borderBottom: '1px solid #f1f5f9' }}>
               <ConversationHeader.Back />
               <Avatar name={conversations[activeConversation].avatar || conversations[activeConversation].name[0]} status={conversations[activeConversation].status} />
               <ConversationHeader.Content
                 userName={conversations[activeConversation].name}
-                info={`Dernier message : ${conversations[activeConversation].lastMsg}`}
+                info={`Statut : ${conversations[activeConversation].status === 'available' ? 'En ligne' : 'Absent'}`}
               />
               <ConversationHeader.Actions>
-                <VoiceCallButton onClick={() => handleInteraction("Appel Vocal", "Initialisation sécurisée...")} />
-                <VideoCallButton onClick={() => handleInteraction("Vidéoconférence", "Ouverture du salon virtuel...")} />
-                <InfoButton onClick={() => handleInteraction("Infos Groupe", "Accès aux fichiers partagés...")} />
+                <button onClick={() => handleInteraction("Appel", "Appel vocal en cours...")} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><MessageSquare size={18} /></button>
+                <VoiceCallButton />
+                <VideoCallButton />
+                <button onClick={() => handleInteraction("Fichiers", "Accès au cloud projet...")} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><FileText size={18} /></button>
               </ConversationHeader.Actions>
             </ConversationHeader>
 
-            <MessageList typingIndicator={<TypingIndicator content="Alice est en train d'écrire" />}>
-              <MessageSeparator content="Aujourd'hui" />
+            <MessageList
+              style={{ backgroundColor: '#fff' }}
+              typingIndicator={activeConversation === 0 ? <TypingIndicator content="Alice est en train d'écrire..." /> : null}
+            >
+              <MessageSeparator content="Archives Mars 2026" />
               <Message
                 model={{
                   message: "Bonjour à tous, point météo : attention aux orages sur San Pedro cet après-midi.",
@@ -637,7 +649,7 @@ const ChatView = () => {
                   position: "single"
                 }}
               >
-                <Avatar name="JM" src="https://chatscope.io/storybook/react/static/media/zoe.e31d48a5.svg" />
+                <Avatar name="JK" src="https://i.pravatar.cc/150?u=jk" />
               </Message>
               <Message
                 model={{
@@ -648,7 +660,7 @@ const ChatView = () => {
                   position: "single"
                 }}
               >
-                <Avatar name="M" />
+                <Avatar name="MD" src="https://i.pravatar.cc/150?u=md" />
               </Message>
               <Message
                 model={{
@@ -668,7 +680,7 @@ const ChatView = () => {
                   position: "last"
                 }}
               >
-                <Avatar name="A" />
+                <Avatar name="AK" src="https://i.pravatar.cc/150?u=ak" />
               </Message>
             </MessageList>
 
@@ -678,8 +690,9 @@ const ChatView = () => {
               onChange={val => setMsgInputValue(val)}
               onSend={() => {
                 setMsgInputValue("");
-                handleInteraction("Message Envoyé", "Votre message a été diffusé sur le canal.");
+                handleInteraction("Message Envoyé", "Votre message a été diffusé.");
               }}
+              style={{ padding: '20px 30px' }}
               attachButton={true}
             />
           </ChatContainer>
@@ -1136,13 +1149,17 @@ const App = () => {
       <Toaster richColors position="bottom-right" closeButton />
       {/* Sidebar */}
       <aside className="w-72 bg-white border-r border-slate-200 p-6 flex flex-col h-full overflow-y-auto shrink-0 scrollbar-hide">
-        <div className="flex items-center gap-3 mb-10 px-2 shrink-0">
-          <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center text-white shadow-xl shadow-slate-200 rotate-3 overflow-hidden border border-slate-800">
-            <span className="text-xl font-black italic tracking-tighter">KR</span>
+        <div className="flex items-center gap-3 mb-10 px-2 shrink-0 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
+          <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center p-1 shadow-xl shadow-slate-200 rotate-2 border border-slate-800 transition-transform hover:rotate-0">
+            <img 
+              src="/assets/EMBLEME_FOND_BLANC__1_-removebg-preview.png" 
+              alt="Kayry BTP Logo" 
+              className="w-full h-full object-contain filter invert"
+            />
           </div>
           <div>
-            <h2 className="text-xl font-heading font-black tracking-tight leading-none">KAYRY BTP</h2>
-            <span className="text-[10px] text-btp-secondary font-bold uppercase tracking-[0.2em]">Manager Pro</span>
+            <h2 className="text-xl font-heading font-black tracking-tight leading-none text-black">KAYRY BTP</h2>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Manager Pro</span>
           </div>
         </div>
 

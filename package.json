@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@chatscope/chat-ui-kit-react": "^2.1.1",
+    "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.35.2",
     "lucide-react": "^0.577.0",

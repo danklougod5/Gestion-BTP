@@ -27,6 +27,25 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Toaster, toast } from 'sonner';
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import {
+  MainContainer,
+  ChatContainer,
+  MessageList,
+  Message,
+  MessageInput,
+  Sidebar as ChatSidebar,
+  Search as ChatSearch,
+  ConversationList,
+  Conversation,
+  Avatar,
+  ConversationHeader,
+  VoiceCallButton,
+  VideoCallButton,
+  InfoButton,
+  TypingIndicator,
+  MessageSeparator
+} from "@chatscope/chat-ui-kit-react";
 
 const handleInteraction = (label, description = "Ouverture du module...") => {
   toast.success(label, {
@@ -568,58 +587,122 @@ const ProjectsView = ({ onSelectProject }) => (
   </div>
 );
 
-const ChatView = () => (
-  <div className="max-w-4xl mx-auto h-[calc(100vh-120px)] flex flex-col">
-    <header className="mb-6">
-      <h1 className="text-3xl font-heading font-bold">Messagerie d'Entreprise</h1>
-      <p className="text-btp-secondary text-sm font-medium">Communiquez avec vos conducteurs de travaux et chefs de chantier.</p>
-    </header>
+const ChatView = () => {
+  const [msgInputValue, setMsgInputValue] = useState("");
+  const [activeConversation, setActiveConversation] = useState(0);
 
-    <div className="flex-1 glass-card p-0 flex flex-col shadow-2xl overflow-hidden border-slate-200">
-      <div className="bg-slate-50 p-4 border-b border-slate-200 flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-btp-cta flex items-center justify-center text-white font-black">#</div>
-          <div>
-            <p className="font-bold text-sm">Canal Général</p>
-            <p className="text-[10px] text-green-500 font-bold uppercase tracking-wider">12 personnes en ligne</p>
-          </div>
-        </div>
-        <button className="text-slate-400 hover:text-btp-cta"><Settings size={18} /></button>
-      </div>
+  const conversations = [
+    { name: "Canal Général", lastMsg: "Attention aux orages sur San Pedro...", status: "available", avatar: null, unread: 2 },
+    { name: "Direction Technique", lastMsg: "Le planning a été mis à jour.", status: "dnd", avatar: "JM", info: "Jean-Marc Koné" },
+    { name: "Chantier Bassam", lastMsg: "Béton livré à 14:00.", status: "available", avatar: "B", info: "Moussa Diakité" },
+    { name: "Equipe RH", lastMsg: "Fiches de paie prêtes.", status: "away", avatar: "RH" }
+  ];
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/30">
-        {[
-          { user: "Jean-Marc Koné", role: "Directeur", text: "Bonjour à tous, point météo : attention aux orages sur San Pedro cet après-midi.", time: "08:30", me: false },
-          { user: "Moussa Diakité", role: "Chef Chantier Bassam", text: "Bien reçu, on a sécurisé les grues. Le béton a déjà pris.", time: "09:12", me: false },
-          { user: "Moi", role: "Manager", text: "Parfait. Quelqu'un peut envoyer les photos du site Anyama ?", time: "10:05", me: true },
-          { user: "Alice Kouassi", role: "Architecte", text: "Je les uploade dans la section Documents du projet tout de suite !", time: "10:08", me: false }
-        ].map((msg, i) => (
-          <div key={i} className={`flex flex-col ${msg.me ? 'items-end' : 'items-start'}`}>
-            <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${msg.me ? 'bg-slate-900 text-white rounded-tr-none' : 'bg-white text-slate-800 rounded-tl-none border border-slate-100'}`}>
-              {!msg.me && <p className="text-[10px] font-black text-btp-cta uppercase mb-1">{msg.user} • {msg.role}</p>}
-              <p className="text-sm font-medium leading-relaxed">{msg.text}</p>
-            </div>
-            <span className="text-[9px] font-bold text-slate-400 mt-1 uppercase">{msg.time}</span>
-          </div>
-        ))}
-      </div>
+  return (
+    <div className="max-w-6xl mx-auto h-[calc(100vh-120px)] flex flex-col">
+      <header className="mb-6">
+        <h1 className="text-3xl font-heading font-bold">Centre de Communication</h1>
+        <p className="text-btp-secondary text-sm font-medium">Collaboration Teams-style pour vos équipes BTP.</p>
+      </header>
 
-      <div className="p-4 bg-white border-t border-slate-200">
-        <div className="flex gap-4 items-center">
-          <button className="text-slate-400 hover:text-btp-cta"><Plus size={20} /></button>
-          <input
-            type="text"
-            placeholder="Écrivez votre message..."
-            className="flex-1 bg-slate-50 border-0 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-btp-cta/10"
-          />
-          <button className="w-11 h-11 bg-btp-cta text-white rounded-xl flex items-center justify-center shadow-lg shadow-orange-100 hover:scale-105 transition-transform">
-            <Send size={18} />
-          </button>
-        </div>
+      <div className="flex-1 rounded-2xl shadow-2xl overflow-hidden border border-slate-200 bg-white flex" style={{ height: "600px" }}>
+        <MainContainer responsive>
+          <ChatSidebar position="left" scrollable={false} className="border-r border-slate-100" style={{ width: '300px' }}>
+            <ChatSearch placeholder="Rechercher une conversation..." className="p-4" />
+            <ConversationList>
+              {conversations.map((c, i) => (
+                <Conversation
+                  key={i}
+                  name={c.name}
+                  lastSenderName={c.info || "Système"}
+                  info={c.lastMsg}
+                  active={activeConversation === i}
+                  onClick={() => setActiveConversation(i)}
+                  unreadDot={c.unread > 0}
+                >
+                  <Avatar name={c.avatar || c.name[0]} status={c.status} />
+                </Conversation>
+              ))}
+            </ConversationList>
+          </ChatSidebar>
+
+          <ChatContainer className="bg-slate-50/30">
+            <ConversationHeader>
+              <ConversationHeader.Back />
+              <Avatar name={conversations[activeConversation].avatar || conversations[activeConversation].name[0]} status={conversations[activeConversation].status} />
+              <ConversationHeader.Content
+                userName={conversations[activeConversation].name}
+                info={`Dernier message : ${conversations[activeConversation].lastMsg}`}
+              />
+              <ConversationHeader.Actions>
+                <VoiceCallButton onClick={() => handleInteraction("Appel Vocal", "Initialisation sécurisée...")} />
+                <VideoCallButton onClick={() => handleInteraction("Vidéoconférence", "Ouverture du salon virtuel...")} />
+                <InfoButton onClick={() => handleInteraction("Infos Groupe", "Accès aux fichiers partagés...")} />
+              </ConversationHeader.Actions>
+            </ConversationHeader>
+
+            <MessageList typingIndicator={<TypingIndicator content="Alice est en train d'écrire" />}>
+              <MessageSeparator content="Aujourd'hui" />
+              <Message
+                model={{
+                  message: "Bonjour à tous, point météo : attention aux orages sur San Pedro cet après-midi.",
+                  sentTime: "08:30",
+                  sender: "Jean-Marc Koné",
+                  direction: "incoming",
+                  position: "single"
+                }}
+              >
+                <Avatar name="JM" src="https://chatscope.io/storybook/react/static/media/zoe.e31d48a5.svg" />
+              </Message>
+              <Message
+                model={{
+                  message: "Bien reçu, on a sécurisé les grues. Le béton a déjà pris.",
+                  sentTime: "09:12",
+                  sender: "Moussa Diakité",
+                  direction: "incoming",
+                  position: "single"
+                }}
+              >
+                <Avatar name="M" />
+              </Message>
+              <Message
+                model={{
+                  message: "Parfait. Quelqu'un peut envoyer les photos du site Anyama ?",
+                  sentTime: "10:05",
+                  sender: "Moi",
+                  direction: "outgoing",
+                  position: "single"
+                }}
+              />
+              <Message
+                model={{
+                  message: "Je les uploade dans la section Documents du projet tout de suite !",
+                  sentTime: "10:08",
+                  sender: "Alice Kouassi",
+                  direction: "incoming",
+                  position: "last"
+                }}
+              >
+                <Avatar name="A" />
+              </Message>
+            </MessageList>
+
+            <MessageInput
+              placeholder="Écrivez votre message ici..."
+              value={msgInputValue}
+              onChange={val => setMsgInputValue(val)}
+              onSend={() => {
+                setMsgInputValue("");
+                handleInteraction("Message Envoyé", "Votre message a été diffusé sur le canal.");
+              }}
+              attachButton={true}
+            />
+          </ChatContainer>
+        </MainContainer>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const ActionsView = () => (
   <div className="max-w-5xl mx-auto">

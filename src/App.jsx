@@ -17,7 +17,13 @@ import {
   Wallet,
   Bell,
   Settings,
-  ChevronRight
+  ChevronRight,
+  MessageSquare,
+  FileText,
+  CheckSquare,
+  Undo2,
+  Trash2,
+  Send
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Toaster, toast } from 'sonner';
@@ -287,7 +293,195 @@ const DashboardView = () => (
   </>
 );
 
-const ProjectsView = () => (
+const ProjectDetailView = ({ project, onBack }) => {
+  const [activeTab, setActiveTab] = useState('notes');
+  const [newNote, setNewNote] = useState('');
+  const [notes, setNotes] = useState([
+    { id: 1, user: "Jean-Marc Koné", text: "Vérification des fondations terminée. RAS.", date: "10/03/2026 09:15" },
+    { id: 2, user: "Koffi N'Goran", text: "Besoin de 5 tonnes de gravier supplémentaires pour demain.", date: "10/03/2026 11:30" }
+  ]);
+
+  const [tasks, setTasks] = useState([
+    { id: 1, text: "Coulage dalle R+1", completed: false },
+    { id: 2, text: "Vérification étanchéité", completed: true },
+    { id: 3, text: "Installation échafaudages", completed: false }
+  ]);
+
+  const addNote = () => {
+    if (!newNote.trim()) return;
+    setNotes([{ id: Date.now(), user: "Directeur Technique", text: newNote, date: "À l'instant" }, ...notes]);
+    setNewNote('');
+    handleInteraction("Note ajoutée", "Votre commentaire a été enregistré sur le projet.");
+  };
+
+  const toggleTask = (id) => {
+    setTasks(tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+    handleInteraction("Tâche mise à jour", "Le statut de la tâche a été modifié.");
+  };
+
+  return (
+    <div className="max-w-5xl mx-auto">
+      <button
+        onClick={onBack}
+        className="mb-6 flex items-center gap-2 text-slate-500 hover:text-btp-cta font-bold text-sm transition-colors group"
+      >
+        <Undo2 size={18} className="group-hover:-translate-x-1 transition-transform" /> Retour aux chantiers
+      </button>
+
+      <header className="mb-8 flex justify-between items-start">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-4xl font-heading font-bold tracking-tight">{project.name}</h1>
+            <span className={`status-badge status-${project.status}`}>{project.status}</span>
+          </div>
+          <p className="text-btp-secondary font-medium flex items-center gap-1">
+            <MapPin size={14} /> {project.city} • Budget : {project.budget} CFA
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <button className="p-3 bg-white border border-slate-200 rounded-xl hover:text-btp-cta transition-colors"><Settings size={20} /></button>
+          <button className="btn-primary">Partager le dossier</button>
+        </div>
+      </header>
+
+      <div className="flex gap-6 border-b border-slate-200 mb-8">
+        {[
+          { id: 'notes', label: 'Notes & Journal', icon: MessageSquare },
+          { id: 'tasks', label: 'Tâches & Suivi', icon: CheckSquare },
+          { id: 'docs', label: 'Documents', icon: FileText }
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex items-center gap-2 px-4 py-3 font-bold text-sm transition-all relative ${activeTab === tab.id ? 'text-btp-cta' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            <tab.icon size={18} />
+            {tab.label}
+            {activeTab === tab.id && <motion.div layoutId="detail-tab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-btp-cta" />}
+          </button>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          {activeTab === 'notes' && (
+            <div className="space-y-6">
+              <div className="glass-card bg-slate-50 border-slate-200">
+                <textarea
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  placeholder="Laissez une note ou une instruction pour ce chantier..."
+                  className="w-full bg-transparent border-0 focus:ring-0 text-sm font-medium resize-none h-24"
+                />
+                <div className="flex justify-end mt-2">
+                  <button onClick={addNote} className="btn-primary py-2 px-4 text-xs">Publier la note</button>
+                </div>
+              </div>
+              <div className="space-y-4">
+                {notes.map(note => (
+                  <div key={note.id} className="glass-card hover:border-slate-300 transition-colors">
+                    <div className="flex justify-between items-start mb-2">
+                      <p className="font-bold text-sm">{note.user}</p>
+                      <span className="text-[10px] text-slate-400 font-bold">{note.date}</span>
+                    </div>
+                    <p className="text-sm text-slate-600 leading-relaxed font-medium">{note.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'tasks' && (
+            <div className="glass-card">
+              <h3 className="font-heading font-bold mb-6">Liste de Contrôle du Chantier</h3>
+              <div className="space-y-3">
+                {tasks.map(task => (
+                  <div
+                    key={task.id}
+                    onClick={() => toggleTask(task.id)}
+                    className="flex items-center gap-3 p-4 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-all"
+                  >
+                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-colors ${task.completed ? 'bg-green-500 border-green-500 text-white' : 'border-slate-200'}`}>
+                      {task.completed && <CheckSquare size={14} />}
+                    </div>
+                    <span className={`text-sm font-semibold ${task.completed ? 'line-through text-slate-400' : 'text-slate-700'}`}>{task.text}</span>
+                  </div>
+                ))}
+              </div>
+              <button className="w-full mt-6 py-3 border-2 border-dashed border-slate-200 rounded-xl text-slate-400 text-xs font-bold hover:border-btp-cta hover:text-btp-cta transition-all flex items-center justify-center gap-2">
+                <Plus size={16} /> Ajouter une tâche
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'docs' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                { name: "Plan de Masse.pdf", size: "4.2 MB", type: "PDF" },
+                { name: "Devis Descriptif.docx", size: "1.5 MB", type: "DOC" },
+                { name: "Planning GANTT.xlsx", size: "2.1 MB", type: "XLS" },
+                { name: "Photo_Site_Mars.jpg", size: "8.9 MB", type: "IMG" }
+              ].map((doc, i) => (
+                <div key={i} className="glass-card flex items-center gap-4 hover:border-btp-cta/30 cursor-pointer group">
+                  <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-btp-cta/10 group-hover:text-btp-cta transition-colors">
+                    <FileText size={24} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold truncate">{doc.name}</p>
+                    <p className="text-[10px] text-btp-secondary font-bold uppercase">{doc.size} • {doc.type}</p>
+                  </div>
+                </div>
+              ))}
+              <div className="border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center p-6 text-slate-400 hover:border-btp-cta hover:text-btp-cta cursor-pointer transition-all">
+                <Plus size={32} />
+                <span className="text-xs font-bold mt-2 uppercase tracking-widest">Uploader un document</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-6">
+          <div className="glass-card bg-slate-900 text-white border-0">
+            <h3 className="font-heading font-bold mb-4">Statut Financier</h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Budget Total</p>
+                <p className="text-2xl font-bold">{project.budget} CFA</p>
+              </div>
+              <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-full bg-btp-cta w-2/3"></div>
+              </div>
+              <div className="flex justify-between text-[10px] font-bold text-slate-400">
+                <span>Dépensé : 65%</span>
+                <span>Restant : 35%</span>
+              </div>
+            </div>
+          </div>
+          <div className="glass-card">
+            <h3 className="font-heading font-bold mb-4">Équipe Assignée</h3>
+            <div className="space-y-3">
+              {[
+                { name: "Moussa Diakité", role: "Chef de Chantier" },
+                { name: "Alice Kouassi", role: "Architecte" },
+                { name: "Karim Ouattara", role: "Ingénieur Structure" }
+              ].map((member, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-slate-200"></div>
+                  <div>
+                    <p className="text-xs font-bold">{member.name}</p>
+                    <p className="text-[10px] text-btp-secondary">{member.role}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ProjectsView = ({ onSelectProject }) => (
   <div className="max-w-6xl mx-auto">
     <header className="mb-10">
       <h1 className="text-4xl font-heading font-bold tracking-tight">Gestion des Chantiers</h1>
@@ -332,7 +526,7 @@ const ProjectsView = () => (
           key={i}
           whileHover={{ y: -5, scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={() => handleInteraction(`Détail Projet : ${p.name}`, `Ville : ${p.city} | Statut : ${p.status}`)}
+          onClick={() => onSelectProject(p)}
           className="glass-card cursor-pointer hover:border-btp-cta/30 transition-colors"
         >
           <div className="flex justify-between items-start mb-4">
@@ -374,6 +568,90 @@ const ProjectsView = () => (
   </div>
 );
 
+const ChatView = () => (
+  <div className="max-w-4xl mx-auto h-[calc(100vh-120px)] flex flex-col">
+    <header className="mb-6">
+      <h1 className="text-3xl font-heading font-bold">Messagerie d'Entreprise</h1>
+      <p className="text-btp-secondary text-sm font-medium">Communiquez avec vos conducteurs de travaux et chefs de chantier.</p>
+    </header>
+
+    <div className="flex-1 glass-card p-0 flex flex-col shadow-2xl overflow-hidden border-slate-200">
+      <div className="bg-slate-50 p-4 border-b border-slate-200 flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-btp-cta flex items-center justify-center text-white font-black">#</div>
+          <div>
+            <p className="font-bold text-sm">Canal Général</p>
+            <p className="text-[10px] text-green-500 font-bold uppercase tracking-wider">12 personnes en ligne</p>
+          </div>
+        </div>
+        <button className="text-slate-400 hover:text-btp-cta"><Settings size={18} /></button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/30">
+        {[
+          { user: "Jean-Marc Koné", role: "Directeur", text: "Bonjour à tous, point météo : attention aux orages sur San Pedro cet après-midi.", time: "08:30", me: false },
+          { user: "Moussa Diakité", role: "Chef Chantier Bassam", text: "Bien reçu, on a sécurisé les grues. Le béton a déjà pris.", time: "09:12", me: false },
+          { user: "Moi", role: "Manager", text: "Parfait. Quelqu'un peut envoyer les photos du site Anyama ?", time: "10:05", me: true },
+          { user: "Alice Kouassi", role: "Architecte", text: "Je les uploade dans la section Documents du projet tout de suite !", time: "10:08", me: false }
+        ].map((msg, i) => (
+          <div key={i} className={`flex flex-col ${msg.me ? 'items-end' : 'items-start'}`}>
+            <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${msg.me ? 'bg-slate-900 text-white rounded-tr-none' : 'bg-white text-slate-800 rounded-tl-none border border-slate-100'}`}>
+              {!msg.me && <p className="text-[10px] font-black text-btp-cta uppercase mb-1">{msg.user} • {msg.role}</p>}
+              <p className="text-sm font-medium leading-relaxed">{msg.text}</p>
+            </div>
+            <span className="text-[9px] font-bold text-slate-400 mt-1 uppercase">{msg.time}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="p-4 bg-white border-t border-slate-200">
+        <div className="flex gap-4 items-center">
+          <button className="text-slate-400 hover:text-btp-cta"><Plus size={20} /></button>
+          <input
+            type="text"
+            placeholder="Écrivez votre message..."
+            className="flex-1 bg-slate-50 border-0 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-btp-cta/10"
+          />
+          <button className="w-11 h-11 bg-btp-cta text-white rounded-xl flex items-center justify-center shadow-lg shadow-orange-100 hover:scale-105 transition-transform">
+            <Send size={18} />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const ActionsView = () => (
+  <div className="max-w-5xl mx-auto">
+    <header className="mb-10">
+      <h1 className="text-4xl font-heading font-bold tracking-tight">Actions en Attente</h1>
+      <p className="text-btp-secondary font-medium mt-1">Liste consolidée des tâches et validations prioritaires sur tous vos sites.</p>
+    </header>
+
+    <div className="grid grid-cols-1 gap-4">
+      {[
+        { title: "Valider facture Ciment Holcim", project: "Echangeur Akwaba", priority: "high", date: "Demain" },
+        { title: "Rapport HSE mensuel", project: "CHU Yamoussoukro", priority: "medium", date: "12 Mars" },
+        { title: "Approuver devis climatisation", project: "Logements Anyama", priority: "low", date: "15 Mars" },
+        { title: "Contrôle technique grue G1", project: "Pont Cocody", priority: "high", date: "Aujourd'hui" }
+      ].map((action, i) => (
+        <div key={i} className="glass-card flex items-center justify-between group hover:border-slate-300 transition-colors">
+          <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold ${action.priority === 'high' ? 'bg-red-100 text-red-600' : action.priority === 'medium' ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'}`}>
+              {action.priority === 'high' ? '!!!' : action.priority === 'medium' ? '!!' : '!'}
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900 group-hover:text-btp-cta transition-colors">{action.title}</h3>
+              <p className="text-xs text-btp-secondary font-medium uppercase tracking-wider">{action.project} • Échéance : {action.date}</p>
+            </div>
+          </div>
+          <button className="px-6 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold active:scale-95 transition-transform">Marquer comme fait</button>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 const GpsView = () => (
   <div className="h-full flex flex-col">
     <header className="mb-6 flex justify-between items-center">
@@ -401,8 +679,8 @@ const GpsView = () => (
           { id: "MX-205", type: "Niveleuse", driver: "P. Yao", site: "Cocody", speed: "8 km/h", status: "active" },
           { id: "TR-508", type: "Camion Ciment", driver: "M. Bakayoko", site: "Anyama", speed: "32 km/h", status: "warning" }
         ].map((v, i) => (
-          <motion.div 
-            key={i} 
+          <motion.div
+            key={i}
             whileHover={{ x: 5 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => handleInteraction(`Véhicule : ${v.id}`, `Chauffeur : ${v.driver} | Vitesse : ${v.speed}`)}
@@ -449,11 +727,11 @@ const GpsView = () => (
 
         {/* Map Controls */}
         <div className="absolute top-4 right-4 flex flex-col gap-2">
-          <button 
+          <button
             onClick={() => handleInteraction("Zoom (+)", "Agrandissement de la carte...")}
             className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg font-bold text-lg hover:text-btp-cta active:scale-90 transition-all"
           >+</button>
-          <button 
+          <button
             onClick={() => handleInteraction("Zoom (-)", "Réduction de la carte...")}
             className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg font-bold text-lg hover:text-btp-cta active:scale-90 transition-all"
           >-</button>
@@ -497,9 +775,9 @@ const HrView = () => (
     </header>
 
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-      <motion.div 
-        whileHover={{ scale: 1.02 }} 
-        whileTap={{ scale: 0.98 }} 
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         onClick={() => handleInteraction("Équipes", "Ouverture de la vue détaillée des 14 équipes...")}
         className="glass-card flex items-center gap-4 cursor-pointer"
       >
@@ -511,9 +789,9 @@ const HrView = () => (
           <p className="text-[10px] text-btp-secondary font-bold uppercase">Équipes Actives</p>
         </div>
       </motion.div>
-      <motion.div 
-        whileHover={{ scale: 1.02 }} 
-        whileTap={{ scale: 0.98 }} 
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         onClick={() => handleInteraction("Présence", "Consultation du journal de présence mensuel...")}
         className="glass-card flex items-center gap-4 cursor-pointer"
       >
@@ -525,9 +803,9 @@ const HrView = () => (
           <p className="text-[10px] text-btp-secondary font-bold uppercase">Taux de Présence</p>
         </div>
       </motion.div>
-      <motion.div 
-        whileHover={{ scale: 1.02 }} 
-        whileTap={{ scale: 0.98 }} 
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         onClick={() => handleInteraction("Recrutement", "Accès aux 8 fiches de poste ouvertes...")}
         className="glass-card flex items-center gap-4 cursor-pointer"
       >
@@ -545,11 +823,11 @@ const HrView = () => (
       <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
         <h3 className="font-bold font-heading">Journal de Pointage (Live)</h3>
         <div className="flex gap-2">
-          <button 
+          <button
             onClick={() => handleInteraction("Export PDF", "Génération du rapport de pointage...")}
             className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold hover:border-btp-cta hover:text-btp-cta active:scale-95 transition-all"
           >Exporter PDF</button>
-          <button 
+          <button
             onClick={() => handleInteraction("Rapport", "Compilation des données hebdomadaires...")}
             className="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-bold active:scale-95 transition-all"
           >Rapport Hebdomadaire</button>
@@ -573,8 +851,8 @@ const HrView = () => (
             { name: "Jean-Luc Gnahoré", role: "Maçon Spécialisé", site: "Anyama", time: "07:22", status: "ok" },
             { name: "Awa Sidibé", role: "HSE Manager", site: "Port Abidjan", time: "07:55", status: "ok" }
           ].map((e, i) => (
-            <tr 
-              key={i} 
+            <tr
+              key={i}
               onClick={() => handleInteraction(`Employé : ${e.name}`, `Vue détaillée du profil (${e.role})`)}
               className="group hover:bg-slate-50 transition-colors cursor-pointer"
             >
@@ -660,8 +938,8 @@ const CustomsView = () => (
           { id: "CONT-2115-CI", item: "Revêtement Façade", from: "Valencia, ES", arrival: "18/03/26", status: "transit" },
           { id: "CONT-9932-CI", item: "Ciment spécial VRD", from: "Dakar, SN", arrival: "09/03/26", status: "clear" }
         ].map((c, i) => (
-          <motion.div 
-            key={i} 
+          <motion.div
+            key={i}
             whileHover={{ x: 5, backgroundColor: 'rgba(59, 130, 246, 0.05)' }}
             whileTap={{ scale: 0.99 }}
             onClick={() => handleInteraction(`Container : ${c.id}`, `Article : ${c.item} | Origine : ${c.from}`)}
@@ -739,7 +1017,7 @@ const FinanceView = () => (
               <p className="text-[11px] text-red-600 font-medium mt-1">Échéance dans 2 jours (12 Mars). Montant : 42.5M CFA.</p>
             </div>
           </div>
-          <div 
+          <div
             onClick={() => handleInteraction("Audit Interne", "Consultation de l'ordre de mission pour Yamoussoukro...")}
             className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-3 cursor-pointer hover:bg-white transition-colors active:scale-95"
           >
@@ -749,7 +1027,7 @@ const FinanceView = () => (
               <p className="text-[11px] text-btp-secondary font-medium mt-1">Prévu pour le Chantier de Yamoussoukro le 20 Mars.</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={() => handleInteraction("Facturation", "Ouverture du module de gestion des factures CFA...")}
             className="mt-auto w-full btn-primary py-4 rounded-2xl shadow-lg shadow-orange-100 font-black tracking-[0.1em] text-xs active:scale-95 transition-transform"
           >
@@ -765,15 +1043,22 @@ const FinanceView = () => (
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [selectedProject, setSelectedProject] = useState(null);
 
   const renderContent = () => {
+    if (selectedProject && activeTab === 'projects') {
+      return <ProjectDetailView project={selectedProject} onBack={() => setSelectedProject(null)} />;
+    }
+
     switch (activeTab) {
       case 'dashboard': return <DashboardView />;
-      case 'projects': return <ProjectsView />;
+      case 'projects': return <ProjectsView onSelectProject={(p) => setSelectedProject(p)} />;
       case 'gps': return <GpsView />;
       case 'hr': return <HrView />;
       case 'customs': return <CustomsView />;
       case 'finance': return <FinanceView />;
+      case 'chat': return <ChatView />;
+      case 'actions': return <ActionsView />;
       default: return <DashboardView />;
     }
   };
@@ -796,6 +1081,8 @@ const App = () => {
         <nav className="flex flex-col gap-1 mb-8 shrink-0">
           <SidebarItem id="dashboard" icon={LayoutDashboard} label="Tableau de Bord" activeTab={activeTab} setActiveTab={setActiveTab} />
           <SidebarItem id="projects" icon={BarChart3} label="Chantiers" activeTab={activeTab} setActiveTab={setActiveTab} />
+          <SidebarItem id="chat" icon={MessageSquare} label="Conversations" activeTab={activeTab} setActiveTab={setActiveTab} />
+          <SidebarItem id="actions" icon={CheckSquare} label="Actions en Attente" activeTab={activeTab} setActiveTab={setActiveTab} />
           <SidebarItem id="gps" icon={MapPin} label="Suivi GPS Live" activeTab={activeTab} setActiveTab={setActiveTab} />
           <SidebarItem id="hr" icon={Users} label="Ressources Humaines" activeTab={activeTab} setActiveTab={setActiveTab} />
           <SidebarItem id="customs" icon={Ship} label="Port d'Abidjan" activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -825,7 +1112,7 @@ const App = () => {
           </motion.div>
 
           <div className="mt-6 flex items-center gap-3 px-2 border-t border-slate-100 pt-6">
-            <div 
+            <div
               onClick={() => handleInteraction("Profil Utilisateur", "Accès aux paramètres de Jean-Marc Koné...")}
               className="w-8 h-8 rounded-full bg-slate-200 border-2 border-btp-cta flex-shrink-0 cursor-pointer active:scale-90 transition-transform"
             ></div>
@@ -833,10 +1120,10 @@ const App = () => {
               <p className="text-sm font-bold truncate tracking-tight text-slate-900">M. Jean-Marc Koné</p>
               <p className="text-[10px] text-btp-secondary font-medium">Directeur Technique</p>
             </div>
-            <Settings 
-              size={16} 
+            <Settings
+              size={16}
               onClick={() => handleInteraction("Paramètres", "Configuration de l'interface et du compte...")}
-              className="text-slate-400 hover:text-btp-cta cursor-pointer transition-colors active:rotate-90" 
+              className="text-slate-400 hover:text-btp-cta cursor-pointer transition-colors active:rotate-90"
             />
           </div>
         </div>
